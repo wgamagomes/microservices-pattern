@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EShop.Catalog.Domain.Entities;
+using EShop.Catalog.Domain.Repositories;
 
 namespace EShop.Catalog.Infrastructure.Data.Repositories
 {
-    public class CatalogItemRepository
+    public class CatalogItemRepository: GenericRepository<CatalogItem>, ICatalogItemRepository
     {
     }
 }

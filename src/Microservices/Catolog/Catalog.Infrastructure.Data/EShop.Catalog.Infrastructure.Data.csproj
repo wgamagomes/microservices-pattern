@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\EShop.Domain.Core\EShop.Domain.Core.csproj" />
+    <ProjectReference Include="..\EShop.Catalog.Domain\EShop.Catalog.Domain.csproj" />
   </ItemGroup>
 
 </Project>
