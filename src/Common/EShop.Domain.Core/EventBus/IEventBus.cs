@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EShop.Domain.Core.Events;
 
 namespace EShop.Domain.Core.EventBus
 {
-    interface IEventBus
+    public interface IEventBus
     {
+        void Publish(Event @event);
+
+        void Subscribe<TEvent>() where TEvent : Event;
     }
 }
