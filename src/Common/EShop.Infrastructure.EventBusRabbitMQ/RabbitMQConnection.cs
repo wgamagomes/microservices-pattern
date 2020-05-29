@@ -30,7 +30,7 @@ namespace EShop.Infrastructure.EventBusRabbitMQ
             }
         }
 
-        public IModel CreateModel()
+        public IModel GetChannel()
         {
             if (!IsConnected)
                 TryConnect();
@@ -44,7 +44,7 @@ namespace EShop.Infrastructure.EventBusRabbitMQ
                 .Or<BrokerUnreachableException>()
                 .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
                 {
-                    //Log exception here when RabbitMQ Client could not connect to server
+                    //Log the exception here when RabbitMQ Client could not connect to server
                 }
             );
 
