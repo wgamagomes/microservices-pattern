@@ -38,12 +38,12 @@ namespace EShop.Infrastructure.EventBusRabbitMQ
                 {
                     channel.ExchangeDeclare(exchange: BROKER_NAME, type: ExchangeType.Direct);
 
-                    policy.Execute(() => PublishEvent(@event, channel));
+                    policy.Execute(() => BasicPublish(@event, channel));
                 }
             });
         }
 
-        private void PublishEvent(Event @event, IModel channel)
+        private void BasicPublish(Event @event, IModel channel)
         {
             var eventName = @event.GetType().Name;
             var message = JsonConvert.SerializeObject(@event);

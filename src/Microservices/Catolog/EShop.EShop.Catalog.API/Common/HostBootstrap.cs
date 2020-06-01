@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Catalog.API
 {
+    //TODO: Common
     public static class HostBootstrap
     {
         public static Task RunAsync<TStartup>() where TStartup : class

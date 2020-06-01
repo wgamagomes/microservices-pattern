@@ -2,6 +2,7 @@
 
 namespace EShop.Catalog.API.ViewModel
 {
+    //TODO: Common
     public class PaginatedViewModel<TEntity> where TEntity : class
     {
         public int PageIndex { get; private set; }
