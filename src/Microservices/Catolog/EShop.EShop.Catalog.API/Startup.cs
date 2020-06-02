@@ -25,39 +25,8 @@ namespace Catalog.API
         {
             services
                 .AddCustomControllers()
-                .AddSwagger(Configuration);
-
-            RegisterEventBus(services);
-        }
-
-        private void RegisterEventBus(IServiceCollection services)
-        {
-            services.AddSingleton<IRabbitMQConnection>(sp =>
-            {
-                var config = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json")
-                        .Build();
-
-                var factory = new ConnectionFactory();
-
-                config.GetSection("RabbitMqConnection").Bind(factory);
-
-                return new RabbitMQConnection(factory, 5);
-            });
-
-            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
-            {
-                var rabbitMQConnection = sp.GetRequiredService<IRabbitMQConnection>();
-
-                var retryCount = 5;
-
-                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
-                {
-                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
-                }
-
-                return new EventBusRabbitMQ(rabbitMQConnection, retryCount);
-            });
+                .AddSwagger(Configuration)
+                .AddEventBus(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,10 +47,12 @@ namespace Catalog.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCustomSwagger(Configuration);
         }
     }
 
-    public static class CustomExtensionMethods
+    public static class StartupExtensionMethods
     {
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
@@ -107,5 +78,50 @@ namespace Catalog.API
             return services;
         }
 
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IRabbitMQConnection>(sp =>
+            {
+                var config = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json")
+                        .Build();
+
+                var factory = new ConnectionFactory();
+
+                config.GetSection("RabbitMqConnection").Bind(factory);
+
+                return new RabbitMQConnection(factory, 5);
+            });
+
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+            {
+                var rabbitMQConnection = sp.GetRequiredService<IRabbitMQConnection>();
+
+                var retryCount = 5;
+
+                if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(configuration["EventBusRetryCount"]);
+                }
+
+                return new EventBusRabbitMQ(rabbitMQConnection, retryCount);
+            });
+
+            return services;
+        }
+
+        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            var pathBase = configuration["PATH_BASE"];
+
+            app.UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "E-Shop HTTP API");
+
+                });
+
+            return app;
+        }
     }
 }
