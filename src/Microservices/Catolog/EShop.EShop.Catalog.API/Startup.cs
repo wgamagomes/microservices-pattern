@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 
 namespace Catalog.API
@@ -22,7 +23,9 @@ namespace Catalog.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services
+                .AddCustomControllers()
+                .AddSwagger(Configuration);
 
             RegisterEventBus(services);
         }
@@ -35,7 +38,7 @@ namespace Catalog.API
                         .AddJsonFile("appsettings.json")
                         .Build();
 
-                var factory = new ConnectionFactory();                
+                var factory = new ConnectionFactory();
 
                 config.GetSection("RabbitMqConnection").Bind(factory);
 
@@ -76,5 +79,33 @@ namespace Catalog.API
                 endpoints.MapControllers();
             });
         }
+    }
+
+    public static class CustomExtensionMethods
+    {
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "E-Shop HTTP API",
+                    Version = "v1",
+                    Description = "The Catalog Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
+                });
+            });
+
+            return services;
+
+        }
+
+        public static IServiceCollection AddCustomControllers(this IServiceCollection services)
+        {
+            services.AddControllers();
+
+            return services;
+        }
+
     }
 }
