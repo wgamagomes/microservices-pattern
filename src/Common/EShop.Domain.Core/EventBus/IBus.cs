@@ -1,7 +1,7 @@
 ﻿using EShop.Domain.Core.Commands;
 using System.Threading.Tasks;
 
-namespace EShop.Domain.Core.Bus
+namespace EShop.Domain.Core.EventBus
 {
     public interface IBus
     {
