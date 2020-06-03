@@ -71,6 +71,20 @@ namespace Catalog.API
 
         }
 
+        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            var pathBase = configuration["PATH_BASE"];
+
+            app.UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "E-Shop HTTP API");
+
+                });
+
+            return app;
+        }
+
         public static IServiceCollection AddCustomControllers(this IServiceCollection services)
         {
             services.AddControllers();
@@ -108,20 +122,6 @@ namespace Catalog.API
             });
 
             return services;
-        }
-
-        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IConfiguration configuration)
-        {
-            var pathBase = configuration["PATH_BASE"];
-
-            app.UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "E-Shop HTTP API");
-
-                });
-
-            return app;
         }
     }
 }

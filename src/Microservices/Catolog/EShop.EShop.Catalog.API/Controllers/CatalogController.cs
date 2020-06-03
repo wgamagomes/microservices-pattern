@@ -11,7 +11,7 @@ namespace EShop.Catalog.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CatalogController: ControllerBase
+    public class CatalogController : ControllerBase
     {
         public CatalogController()
         {
@@ -30,7 +30,7 @@ namespace EShop.Catalog.API.Controllers
 
             if (!string.IsNullOrEmpty(ids))
             {
-                var items =  GetItemsByIdsAsync(ids);
+                var items = GetItemsByIdsAsync(ids);
 
                 if (!items.Any())
                 {
