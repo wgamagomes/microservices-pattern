@@ -1,4 +1,4 @@
-﻿namespace EShop.Framework.FluentBuilder
+﻿namespace EShop.Common.FluentBuilder
 {
     public class Builder<TBuilder, TEntity> : IBuilder<TEntity>
         where TBuilder : IBuilder<TEntity>, new()
