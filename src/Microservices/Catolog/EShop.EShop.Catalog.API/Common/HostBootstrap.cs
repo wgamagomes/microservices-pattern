@@ -7,13 +7,17 @@ namespace Catalog.API
     //TODO: Common
     public static class HostBootstrap
     {
-        public static Task RunAsync<TStartup>() where TStartup : class
+        public static Task RunAsync<TStartup>() 
+            where TStartup : class
         {
             return Host.CreateDefaultBuilder()
                .ConfigureWebHostDefaults(webBuilder =>
                {
-                   webBuilder.UseStartup<TStartup>();
-               }).Build().RunAsync();
+                   webBuilder                  
+                   .UseStartup<TStartup>();
+               })
+               .Build()
+               .RunAsync();
         }
     }
 }
