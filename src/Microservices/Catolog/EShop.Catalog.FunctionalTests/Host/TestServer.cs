@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using EShop.Common.FluentBuilder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -6,25 +7,25 @@ using System.Reflection;
 
 namespace EShop.Catalog.FunctionalTests.Host
 {
-    public class TestServerBuilder
+    public class TestServerBuilder : Builder<TestServerBuilder, TestServer>
     {
-        public TestServer CreateServer<TStartup>()
+        public TestServerBuilder CreateServer<TStartup>(string appsettings)
             where TStartup : class
         {
-            var path = Assembly.GetAssembly(typeof(TestServerBuilder))
+            var path = Assembly.GetAssembly(typeof(TStartup))
               .Location;
 
             var hostBuilder = new WebHostBuilder()
                 .UseContentRoot(Path.GetDirectoryName(path))
                 .ConfigureAppConfiguration(cb =>
                 {
-                    cb.AddJsonFile("Services/Catalog/appsettings.json", optional: false)
+                    cb.AddJsonFile(appsettings, optional: false)
                     .AddEnvironmentVariables();
                 }).UseStartup<TStartup>();
 
-            var testServer = new TestServer(hostBuilder);
+            _entity = new TestServer(hostBuilder);
 
-            return testServer;
+            return this;
         }
     }
 }
