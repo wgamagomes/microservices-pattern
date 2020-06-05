@@ -2,7 +2,7 @@
 {
     public interface IBuilder<TEntity>
 
-        where TEntity : class, new()
+        where TEntity : class
     { 
         TEntity Build();
     }

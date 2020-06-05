@@ -2,14 +2,9 @@
 {
     public class Builder<TBuilder, TEntity> : IBuilder<TEntity>
         where TBuilder : IBuilder<TEntity>, new()
-        where TEntity : class, new()
+        where TEntity : class
     {
-        protected readonly TEntity _entity;
-
-        public Builder()
-        {
-            _entity = new TEntity();
-        }
+        protected  TEntity _entity;
 
         public TEntity Build()
         {
