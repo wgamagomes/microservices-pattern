@@ -1,4 +1,4 @@
-﻿namespace EShop.Common.FluentBuilder
+﻿namespace EShop.Common.FluentBuilder.Interfaces
 {
     public interface IBuilder<TEntity>
 

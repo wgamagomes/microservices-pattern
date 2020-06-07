@@ -1,4 +1,4 @@
-﻿namespace EShop.Common.FluentBuilder
+﻿namespace EShop.Common.FluentBuilder.Interfaces
 {
     public abstract class Builder<TBuilder, TEntity> : IBuilder<TEntity>
         where TBuilder : IBuilder<TEntity>, new()
@@ -14,6 +14,11 @@
         public TEntity Build()
         {
             return _entity;
+        }
+
+        public static TBuilder NewBuilder()
+        {
+            return new TBuilder();
         }
     }
 }
