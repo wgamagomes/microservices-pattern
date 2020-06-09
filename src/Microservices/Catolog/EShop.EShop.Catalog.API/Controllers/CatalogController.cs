@@ -10,7 +10,7 @@ using System.Net;
 namespace EShop.Catalog.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CatalogController : ControllerBase
     {
         public CatalogController()
@@ -23,9 +23,8 @@ namespace EShop.Catalog.API.Controllers
         [ProducesResponseType(typeof(PaginatedViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<CatalogItem>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult ItemsAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string ids = null)
+        public IActionResult ItemsAsync([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10, string ids = null)
         {
 
             if (!string.IsNullOrEmpty(ids))
@@ -42,7 +41,7 @@ namespace EShop.Catalog.API.Controllers
 
             var totalItems = 1000;
 
-            var itemsOnPage = new List<CatalogItem>();
+            var itemsOnPage = new List<CatalogItem> { new CatalogItem { Name = "Teste" } };
 
             var model = new PaginatedViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
 
