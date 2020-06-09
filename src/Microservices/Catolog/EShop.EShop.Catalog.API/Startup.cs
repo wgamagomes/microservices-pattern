@@ -1,3 +1,5 @@
+using EShop.Catalog.Infrastructure.Data.Contexts;
+using EShop.Common.Web.Extensions;
 using EShop.Domain.Core.EventBus;
 using EShop.Infrastructure.EventBusRabbitMQ;
 using EShop.Infrastructure.EventBusRabbitMQ.Interfaces;
@@ -6,7 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 
 namespace Catalog.API
@@ -54,44 +55,6 @@ namespace Catalog.API
 
     public static class StartupExtensionMethods
     {
-        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddSwaggerGen(options =>
-            {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "E-Shop HTTP API",
-                    Version = "v1",
-                    Description = "The Catalog Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
-                });
-            });
-
-            return services;
-
-        }
-
-        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IConfiguration configuration)
-        {
-            var pathBase = configuration["PATH_BASE"];
-
-            app.UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "E-Shop HTTP API");
-
-                });
-
-            return app;
-        }
-
-        public static IServiceCollection AddCustomControllers(this IServiceCollection services)
-        {
-            services.AddControllers();
-
-            return services;
-        }
-
         public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IRabbitMQConnection>(sp =>
@@ -119,6 +82,16 @@ namespace Catalog.API
                 }
 
                 return new EventBusRabbitMQ(rabbitMQConnection, retryCount);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<CatalogContext>(options => 
+            {
+                configuration.GetConnectionString("CatalogConnection");
             });
 
             return services;
