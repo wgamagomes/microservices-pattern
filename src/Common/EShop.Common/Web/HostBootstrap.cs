@@ -6,17 +6,12 @@ namespace EShop.Common.Web
 {
     public static class HostBootstrap
     {
-        public static Task RunAsync<TStartup>()
-            where TStartup : class
-        {
-            return Host.CreateDefaultBuilder()
-               .ConfigureWebHostDefaults(webBuilder =>
-               {
-                   webBuilder
-                   .UseStartup<TStartup>();
-               })
-               .Build()
-               .RunAsync();
-        }
+        public static Task RunHostAsync<TStartup>(string[] args)
+             where TStartup : class
+            => Host
+                .CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<TStartup>())
+                .Build()
+                .RunAsync();
     }
 }
