@@ -1,3 +1,5 @@
+using EShop.Common.Web;
+using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 namespace Catalog.API
@@ -5,10 +7,9 @@ namespace Catalog.API
     public class Program
     {
         public static async Task Main(string[] args)
-        {
-           await HostBootstrap.RunAsync<Startup>();
-        }
+        => await HostBootstrap.RunHostAsync<Startup>(args);
+
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        => HostBootstrap.CreateHostBuilder<Startup>(args);
     }
 }
-//https://www.facebook.com/groups/DomainDrivenDesignBrasil/?post_id=2005109059549702
-//http://www.fabriciorissetto.com/blog/ddd-bounded-context/
