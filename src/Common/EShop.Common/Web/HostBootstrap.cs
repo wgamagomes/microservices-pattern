@@ -10,21 +10,20 @@ namespace EShop.Common.Web
     {
         public static Task RunHostAsync<TStartup>(string[] args)
              where TStartup : class
-            => Host
-                .CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                    webBuilder
-                        .UseConfiguration(ConfigureEnvironment().Build())
-                        .UseStartup<TStartup>()
-                        .UseKestrel()
-                        .UseIIS()
-                )
-
+            => CreateHostBuilder<TStartup>(args)
                 .Build()
                 .RunAsync();
 
+        public static IHostBuilder CreateHostBuilder<TStartup>(string[] args)
+          where TStartup : class
+        => Host
+          .CreateDefaultBuilder(args)
+          .ConfigureWebHostDefaults(webBuilder =>
+                webBuilder
+                    .UseConfiguration(ConfigureEnvironment().Build())
+                    .UseStartup<TStartup>());
 
-        public static IConfigurationBuilder ConfigureEnvironment()
+        private static IConfigurationBuilder ConfigureEnvironment()
         {
             var builder = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
