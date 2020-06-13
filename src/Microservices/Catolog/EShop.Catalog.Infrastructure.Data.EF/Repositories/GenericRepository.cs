@@ -1,40 +1,52 @@
 ﻿using EShop.Domain.Core.Entities;
 using EShop.Domain.Core.Repository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EShop.Catalog.Infrastructure.Data.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : Entity
     {
-        public GenericRepository()
-        {
+        private DbContext _dbContext;
+        private DbSet<TEntity> _dbSet;
 
+        public GenericRepository(DbContext dbContext)
+        {
+            _dbContext = dbContext;
+            _dbSet = dbContext.Set<TEntity>();
         }
 
         public void Delete(Guid id)
         {
-            throw new NotImplementedException();
+            Delete(_dbSet.Where(e => e.Id == id).ToArray());
         }
 
-        public TEntity Get(Guid id)
+        public virtual void Delete(params TEntity[] entities)
         {
-            throw new NotImplementedException();
+            _dbSet.RemoveRange(entities);
+        }
+
+        public Task<TEntity> GetAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return _dbSet.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
         public IQueryable<TEntity> GetAll()
         {
-            throw new NotImplementedException();
+            return _dbSet;
         }
 
-        public void Insert(TEntity entity)
+        public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(entity, cancellationToken);
         }
 
         public void Update(TEntity entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(entity);
         }
     }
 }
