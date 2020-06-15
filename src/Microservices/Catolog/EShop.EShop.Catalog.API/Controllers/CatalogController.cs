@@ -1,5 +1,6 @@
 ﻿using EShop.Catalog.API.Model;
 using EShop.Catalog.API.ViewModel;
+using EShop.Catalog.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,11 @@ namespace EShop.Catalog.API.Controllers
     [Route("api/[controller]")]
     public class CatalogController : ControllerBase
     {
-        public CatalogController()
-        {
+        private ICatalogItemRepository _catalogItemRepository;
 
+        public CatalogController(ICatalogItemRepository catalogItemRepository)
+        {
+            _catalogItemRepository = catalogItemRepository;
         }
 
         [HttpGet]
