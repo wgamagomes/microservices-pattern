@@ -1,10 +1,13 @@
+using EShop.Catalog.Domain.Repositories;
 using EShop.Catalog.Infrastructure.Data.Contexts;
+using EShop.Catalog.Infrastructure.Data.Repositories;
 using EShop.Common.Web.Extensions;
 using EShop.Domain.Core.EventBus;
 using EShop.Infrastructure.EventBusRabbitMQ;
 using EShop.Infrastructure.EventBusRabbitMQ.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +30,9 @@ namespace Catalog.API
             services
                 .AddCustomControllers()
                 .AddSwagger(Configuration)
-                .AddEventBus(Configuration);
+                .AddEventBus(Configuration)
+                .AddContext(Configuration)
+                .AddRepositories();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,11 +94,17 @@ namespace Catalog.API
 
         public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<CatalogContext>(options => 
+            services.AddDbContext<CatalogContext>(options =>
             {
-                configuration.GetConnectionString("CatalogConnection");
+                options.UseSqlServer(configuration.GetConnectionString("CatalogConnection"));
             });
 
+            return services;
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddTransient<ICatalogItemRepository, CatalogItemRepository>();
             return services;
         }
     }
