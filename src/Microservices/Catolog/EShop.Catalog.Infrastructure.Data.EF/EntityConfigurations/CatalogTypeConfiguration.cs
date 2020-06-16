@@ -1,16 +1,15 @@
 ﻿using EShop.Catalog.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EShop.Catalog.Infrastructure.Data.EF.EntityConfigurations
 {
     public class CatalogTypeConfiguration : EntityTypeConfiguration<CatalogType>
     {
-        protected override void OnEntityBuild(EntityTypeBuilder<CatalogType> builder)
+        public override void Configure(EntityTypeBuilder<CatalogType> builder)
         {
-            builder.ToTable("CatalogType");
+            base.Configure(builder);
 
-            builder.Property(e => e.Type)
+            builder.Property(ct => ct.Type)
                 .IsRequired()
                 .HasMaxLength(100);
         }
