@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using EShop.Catalog.Infrastructure.Data.EF.EntityConfigurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace EShop.Catalog.Infrastructure.Data.Contexts
 {
@@ -8,6 +8,14 @@ namespace EShop.Catalog.Infrastructure.Data.Contexts
         public CatalogContext(DbContextOptions<CatalogContext> options)
             : base(options)
         {
+
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new CatalogBrandConfiguration());
+            builder.ApplyConfiguration(new CatalogItemConfiguration());
+            builder.ApplyConfiguration(new CatalogTypeConfiguration());
         }
     }
 
@@ -19,15 +27,15 @@ namespace EShop.Catalog.Infrastructure.Data.Contexts
 
 
 
-//    public class CatalogContextFactory : IDesignTimeDbContextFactory<CatalogContext>
-//    {
-//        public CatalogContext CreateDbContext(string[] args)
-//        {
-//            var optionsBuilder = new DbContextOptionsBuilder<CatalogContext>();
+    //    public class CatalogContextFactory : IDesignTimeDbContextFactory<CatalogContext>
+    //    {
+    //        public CatalogContext CreateDbContext(string[] args)
+    //        {
+    //            var optionsBuilder = new DbContextOptionsBuilder<CatalogContext>();
 
-//            optionsBuilder.UseSqlServer("");
+    //            optionsBuilder.UseSqlServer("");
 
-//            return new CatalogContext(optionsBuilder.Options);
-//        }
-//    }
+    //            return new CatalogContext(optionsBuilder.Options);
+    //        }
+    //    }
 }
