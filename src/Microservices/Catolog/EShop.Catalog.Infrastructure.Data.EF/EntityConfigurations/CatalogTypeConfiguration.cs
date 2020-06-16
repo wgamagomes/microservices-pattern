@@ -1,10 +1,6 @@
 ﻿using EShop.Catalog.Domain.Entities;
-using EShop.Catalog.Infrastructure.Data.EF.Maps;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Catalog.Infrastructure.Data.EF.EntityConfigurations
 {

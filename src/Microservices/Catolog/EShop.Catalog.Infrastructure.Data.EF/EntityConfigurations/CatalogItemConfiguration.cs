@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EShop.Catalog.Infrastructure.Data.EF.Maps
+namespace EShop.Catalog.Infrastructure.Data.EF.EntityConfigurations
 {
     public class CatalogItemConfiguration : EntityTypeConfiguration<CatalogItem>
     {
