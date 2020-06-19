@@ -2,11 +2,12 @@
 using EShop.Catalog.API.ViewModel;
 using EShop.Catalog.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-
+using System.Threading.Tasks;
 
 namespace EShop.Catalog.API.Controllers
 {
@@ -66,6 +67,31 @@ namespace EShop.Catalog.API.Controllers
             var items = new List<CatalogItem>();
 
             return items;
+        }
+
+        [HttpGet]
+        [Route("items/type/all/brand/{catalogBrandId:int?}")]
+        [ProducesResponseType(typeof(PaginatedViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<PaginatedViewModel<CatalogItem>>> ItemsByBrandIdAsync(Guid? catalogBrandId, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+        {
+            var root = _catalogItemRepository.GetAll(); 
+
+            if (catalogBrandId.HasValue)
+            {
+                root = root.Where(ci => ci.CatalogBrandId == catalogBrandId);
+            }
+
+            var totalItems = await root
+                .LongCountAsync();
+
+            var itemsOnPage = await root
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .ToListAsync();
+
+            //itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
+
+            return new PaginatedViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
         }
 
     }
