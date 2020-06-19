@@ -1,5 +1,6 @@
 ﻿using EShop.Catalog.API.Model;
 using EShop.Catalog.API.ViewModel;
+using EShop.Catalog.Domain.Entities;
 using EShop.Catalog.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace EShop.Catalog.API.Controllers
     public class CatalogController : ControllerBase
     {
         private ICatalogItemRepository _catalogItemRepository;
+        private readonly CatalogSettings _settings;
 
         public CatalogController(ICatalogItemRepository catalogItemRepository)
         {
@@ -74,7 +76,7 @@ namespace EShop.Catalog.API.Controllers
         [ProducesResponseType(typeof(PaginatedViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<PaginatedViewModel<CatalogItem>>> ItemsByBrandIdAsync(Guid? catalogBrandId, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
         {
-            var root = _catalogItemRepository.GetAll(); 
+            var root = _catalogItemRepository.GetAll();
 
             if (catalogBrandId.HasValue)
             {
@@ -84,17 +86,29 @@ namespace EShop.Catalog.API.Controllers
             var totalItems = await root
                 .LongCountAsync();
 
-            var itemsOnPage = await root
+            List<CatalogItem> itemsOnPage = await root
                 .Skip(pageSize * pageIndex)
                 .Take(pageSize)
                 .ToListAsync();
 
-           // itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
+            //itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
 
             return new PaginatedViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
         }
 
- 
+        private List<CatalogItem> ChangeUriPlaceholder(List<CatalogItem> items)
+        {
+            var baseUri = _settings.PicBaseUrl;
+            var azureStorageEnabled = _settings.AzureStorageEnabled;
+
+            foreach (var item in items)
+            {
+               // item.FillProductUrl(baseUri, azureStorageEnabled: azureStorageEnabled);
+            }
+
+            return items;
+        }
+
     }
 
     public class CatalogSettings
