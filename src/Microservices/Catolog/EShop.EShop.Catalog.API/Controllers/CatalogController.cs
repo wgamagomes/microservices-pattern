@@ -1,14 +1,13 @@
-﻿using EShop.Catalog.API.Model;
-using EShop.Catalog.API.ViewModel;
+﻿using EShop.Catalog.Domain.Dto;
 using EShop.Catalog.Domain.Entities;
+using EShop.Catalog.Domain.Query;
 using EShop.Catalog.Domain.Repositories;
+using EShop.Common.Web;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace EShop.Catalog.API.Controllers
 {
@@ -26,32 +25,12 @@ namespace EShop.Catalog.API.Controllers
 
         [HttpGet]
         [Route("items")]
-        [ProducesResponseType(typeof(PaginatedViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<CatalogItem>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult ItemsAsync([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10, string ids = null)
+        [ProducesResponseType(typeof(PaginatedResult<CatalogItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<CatalogItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]    
+        public IActionResult ItemsAsync([FromBody]CatalogItemsQuery catalogItemsQuery)
         {
-
-            if (!string.IsNullOrEmpty(ids))
-            {
-                var items = GetItemsByIdsAsync(ids);
-
-                if (!items.Any())
-                {
-                    return BadRequest("ids value invalid. Must be comma-separated list of numbers");
-                }
-
-                return Ok(items);
-            }
-
-            var totalItems = 1000;
-
-            var itemsOnPage = new List<CatalogItem> { new CatalogItem { Name = "Teste" } };
-
-            var model = new PaginatedViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
-
-            return Ok(model);
+            throw new NotImplementedException();
         }
 
         private List<CatalogItem> GetItemsByIdsAsync(string ids)
@@ -71,30 +50,30 @@ namespace EShop.Catalog.API.Controllers
             return items;
         }
 
-        [HttpGet]
-        [Route("items/type/all/brand/{catalogBrandId:int?}")]
-        [ProducesResponseType(typeof(PaginatedViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<PaginatedViewModel<CatalogItem>>> ItemsByBrandIdAsync(Guid? catalogBrandId, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
-        {
-            var root = _catalogItemRepository.GetAll();
+        //[HttpGet]
+        //[Route("items/type/all/brand/{catalogBrandId:int?}")]
+        //[ProducesResponseType(typeof(PaginatedResult<CatalogItem>), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<PaginatedResult<CatalogItem>>> ItemsByBrandIdAsync(Guid? catalogBrandId, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+        //{
+        //    var root = _catalogItemRepository.GetAll();
 
-            if (catalogBrandId.HasValue)
-            {
-                root = root.Where(ci => ci.CatalogBrandId == catalogBrandId);
-            }
+        //    if (catalogBrandId.HasValue)
+        //    {
+        //        root = root.Where(ci => ci.CatalogBrandId == catalogBrandId);
+        //    }
 
-            var totalItems = await root
-                .LongCountAsync();
+        //    var totalItems = await root
+        //        .LongCountAsync();
 
-            List<CatalogItem> itemsOnPage = await root
-                .Skip(pageSize * pageIndex)
-                .Take(pageSize)
-                .ToListAsync();
+        //    List<CatalogItem> itemsOnPage = await root
+        //        .Skip(pageSize * pageIndex)
+        //        .Take(pageSize)
+        //        .ToListAsync();
 
-            //itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
+        //    //itemsOnPage = ChangeUriPlaceholder(itemsOnPage);
 
-            return new PaginatedViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
-        }
+        //    return new PaginatedResult<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
+        //}
 
         private List<CatalogItem> ChangeUriPlaceholder(List<CatalogItem> items)
         {
