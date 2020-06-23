@@ -3,6 +3,7 @@ using EShop.Catalog.Domain.Entities;
 using EShop.Catalog.Domain.Query;
 using EShop.Catalog.Domain.Repositories;
 using EShop.Common.Web;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,20 +17,24 @@ namespace EShop.Catalog.API.Controllers
     public class CatalogController : ControllerBase
     {
         private ICatalogItemRepository _catalogItemRepository;
+        private IMediator _mediator;
         private readonly CatalogSettings _settings;
 
-        public CatalogController(ICatalogItemRepository catalogItemRepository)
+        public CatalogController(ICatalogItemRepository catalogItemRepository, IMediator mediator)
         {
             _catalogItemRepository = catalogItemRepository;
+            _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("items")]
         [ProducesResponseType(typeof(PaginatedResult<CatalogItemDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<CatalogItemDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]    
         public IActionResult ItemsAsync([FromBody]CatalogItemsQuery catalogItemsQuery)
         {
+            _mediator.Send(catalogItemsQuery);
+
             throw new NotImplementedException();
         }
 
