@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
+using System;
 
 namespace Catalog.API
 {
@@ -31,7 +32,7 @@ namespace Catalog.API
                 .AddCustomControllers()
                 .AddSwagger(Configuration)
                 .AddEventBus(Configuration)
-                .AddContext(Configuration)
+                .AddContext(Configuration)                
                 .AddRepositories();
         }
 
@@ -101,10 +102,18 @@ namespace Catalog.API
 
             return services;
         }
-
+        
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddTransient<ICatalogItemRepository, CatalogItemRepository>();
+            return services;
+        }
+
+        public static IServiceCollection AddMediat(this IServiceCollection services)
+        {
+            var assembly = AppDomain.CurrentDomain.Load("Catalog.API");
+            services.AddMediatR(assembly)
+        
             return services;
         }
     }
