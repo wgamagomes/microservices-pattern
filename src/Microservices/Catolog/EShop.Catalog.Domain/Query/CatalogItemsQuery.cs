@@ -1,7 +1,9 @@
 ﻿using EShop.Catalog.Domain.Dto;
 using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace EShop.Catalog.Domain.Query
 {
@@ -9,11 +11,10 @@ namespace EShop.Catalog.Domain.Query
     {
         public IEnumerable<string> Ids { get; set; }
 
-        public bool IsValid()
-        {
-            var guids = Ids.Select(id => (Ok: int.TryParse(id, out int x), Value: x));
+        public bool IsValid() => !Ids.All(id => IsGuid(id));
 
-            return (!guids.All(nid => nid.Ok));           
-        }
+        private bool IsGuid(string candidate) => candidate != null
+            && new Regex(@"^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$", RegexOptions.Compiled)
+                .IsMatch(candidate);
     }
 }
