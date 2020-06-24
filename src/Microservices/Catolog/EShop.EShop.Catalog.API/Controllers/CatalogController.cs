@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace EShop.Catalog.API.Controllers
 {
@@ -27,16 +28,23 @@ namespace EShop.Catalog.API.Controllers
         }
 
         [HttpPost]
-        [Route("items")]
-        [ProducesResponseType(typeof(PaginatedResult<CatalogItemDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<CatalogItemDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]    
-        public IActionResult ItemsAsync([FromBody]CatalogItemsQuery catalogItemsQuery)
+        [Route("paginatedItems")]
+        [ProducesResponseType(typeof(PaginatedResult<CatalogItemDto>), (int)HttpStatusCode.OK)]        
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ItemsAsync([FromBody]CatalogItemsPaginatedQuery catalogItemsQuery)
         {
-            _mediator.Send(catalogItemsQuery);
-
-            throw new NotImplementedException();
+            return Ok(await _mediator.Send(catalogItemsQuery));
         }
+
+        [HttpPost]
+        [Route("items")] 
+        [ProducesResponseType(typeof(IEnumerable<CatalogItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ItemsAsync([FromBody]CatalogItemsQuery catalogItemsQuery)
+        {
+            return Ok(await _mediator.Send(catalogItemsQuery));
+        }
+
 
         private List<CatalogItem> GetItemsByIdsAsync(string ids)
         {
@@ -87,7 +95,7 @@ namespace EShop.Catalog.API.Controllers
 
             foreach (var item in items)
             {
-               // item.FillProductUrl(baseUri, azureStorageEnabled: azureStorageEnabled);
+                // item.FillProductUrl(baseUri, azureStorageEnabled: azureStorageEnabled);
             }
 
             return items;
