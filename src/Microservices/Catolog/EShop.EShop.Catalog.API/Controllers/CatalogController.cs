@@ -17,13 +17,11 @@ namespace EShop.Catalog.API.Controllers
     [Route("api/[controller]")]
     public class CatalogController : ControllerBase
     {
-        private ICatalogItemRepository _catalogItemRepository;
         private IMediator _mediator;
         private readonly CatalogSettings _settings;
 
-        public CatalogController(ICatalogItemRepository catalogItemRepository, IMediator mediator)
-        {
-            _catalogItemRepository = catalogItemRepository;
+        public CatalogController(IMediator mediator)
+        {  
             _mediator = mediator;
         }
 
@@ -43,24 +41,6 @@ namespace EShop.Catalog.API.Controllers
         public async Task<IActionResult> ItemsAsync([FromBody]CatalogItemsQuery catalogItemsQuery)
         {
             return Ok(await _mediator.Send(catalogItemsQuery));
-        }
-
-
-        private List<CatalogItem> GetItemsByIdsAsync(string ids)
-        {
-            var numIds = ids.Split(',').Select(id => (Ok: Guid.TryParse(id, out Guid x), Value: x));
-
-            if (!numIds.All(nid => nid.Ok))
-            {
-                return new List<CatalogItem>();
-            }
-
-            var idsToSelect = numIds
-                .Select(id => id.Value);
-
-            var items = new List<CatalogItem>();
-
-            return items;
         }
 
         //[HttpGet]
