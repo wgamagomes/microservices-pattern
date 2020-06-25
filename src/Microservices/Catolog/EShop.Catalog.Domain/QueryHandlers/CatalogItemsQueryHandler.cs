@@ -37,7 +37,17 @@ namespace EShop.Catalog.Domain.QueryHandlers
 
         public async Task<IEnumerable<CatalogItemDto>> Handle(CatalogItemsQuery request, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => new List<CatalogItemDto>());
+            if (!request.IsValid())
+                return null; //TODO: return a bad request to be more clear to user
+
+            var idsToSelect = request.Ids.Select(id => Guid.Parse(id));
+
+            var items = await _catalogItemRepository.GetAll()
+                .Select(c => new CatalogItemDto(c))
+                .Where(c => idsToSelect.Contains(c.Id))
+                .ToListAsync(cancellationToken);
+
+            return items;
         }
     }
 }
