@@ -13,6 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using System;
+using MediatR;
+using EShop.Catalog.Domain.QueryHandlers;
+using EShop.Catalog.Domain.Dto;
+using EShop.Common.Web;
+using EShop.Catalog.Domain.Query;
+using System.Collections.Generic;
 
 namespace Catalog.API
 {
@@ -32,8 +38,9 @@ namespace Catalog.API
                 .AddCustomControllers()
                 .AddSwagger(Configuration)
                 .AddEventBus(Configuration)
-                .AddContext(Configuration)                
-                .AddRepositories();
+                .AddContext(Configuration)
+                .AddRepositories()
+                .AddMediatR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,18 +109,19 @@ namespace Catalog.API
 
             return services;
         }
-        
+
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddTransient<ICatalogItemRepository, CatalogItemRepository>();
             return services;
         }
 
-        public static IServiceCollection AddMediat(this IServiceCollection services)
+        public static IServiceCollection AddMediatR(this IServiceCollection services)
         {
-            var assembly = AppDomain.CurrentDomain.Load("Catalog.API");
-            services.AddMediatR(assembly)
-        
+            services.AddMediatR(typeof(Startup).Assembly);
+            services.AddTransient<IRequestHandler<CatalogItemsPaginatedQuery, PaginatedResult<CatalogItemDto>>, CatalogItemsQueryHandler>();
+            services.AddTransient<IRequestHandler<CatalogItemsQuery, IEnumerable<CatalogItemDto>>, CatalogItemsQueryHandler>();
+
             return services;
         }
     }
