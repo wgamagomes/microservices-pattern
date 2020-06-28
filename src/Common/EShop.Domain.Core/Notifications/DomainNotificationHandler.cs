@@ -13,6 +13,7 @@ namespace EShop.Domain.Core.Notifications
     public DomainNotificationHandler()
     {
         _notifications = new List<DomainNotification>();
+
     }
 
     public Task Handle(DomainNotification message, CancellationToken cancellationToken)
